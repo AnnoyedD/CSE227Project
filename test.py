@@ -56,7 +56,11 @@ while line:
         status,output=commands.getstatusoutput('rm -rf temp')
 	log.write('Remove temporary directory: '+str(status)+'\n')
         status,output=commands.getstatusoutput('rm -f '+f)
-	log.write('Remove package: '+str(status)+'\n\n')
+	log.write('Remove package: '+str(status)+'\n')
+	#for further analysis
+	log.write('Total number of packages: '+str(totalNum)+'\n')
+	log.write('Total number of elf: '+str(totalElf)+'\n')
+	log.write('Total number of canary: '+str(canaryNum)+'\n\n')
 	break
   
   line=avail.readline()

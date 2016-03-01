@@ -20,4 +20,8 @@ totalNum = 0
 totalElf = 0
 canaryNum = 0
 
-#for l in avail:
+for l in avail:
+    if len(l.split()) != 3:
+        continue
+    totalNum += 1
+    pkgName = l.split()[0]

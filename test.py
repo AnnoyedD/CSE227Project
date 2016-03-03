@@ -70,7 +70,7 @@ while line:
 	log.write('Total number of canary: '+str(canaryNum)+'\n\n')
 	print 'Total number of packages: ',totalNum
 	print 'Total numver of elf: ',totalElf
-	print 'Total number of canary: 'canaryNum
+	print 'Total number of canary: ', canaryNum
 	break
   
   line=avail.readline()

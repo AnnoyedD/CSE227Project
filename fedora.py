@@ -1,7 +1,7 @@
 import os
 import os.path
 from pwn import pwnlib
-import commandss
+import commands
 
 pkgInfo = 'avail.txt'
 logFile = 'fedora23.log'
@@ -34,4 +34,25 @@ for l in avail:
     curDir = os.getcwd()
     fileList = os.listdir(curDir)
 
-    status, output = commands.getstatusoutput('rpm2cpio ' + fullName + ' | cpio -idm')
+    os.chdir('temp')
+    status, output = commands.getstatusoutput('rpm2cpio ../' + fullName + ' | cpio -idm')
+    os.chdir('..')
+    log.write('Decompress package: '+ str(status) + '\n')
+
+    for root, dirs, files in os.walk(cuDir + '/temp'):
+        for name in files:
+            fileName = root + '/' + name
+            if os.access(fileName, os.X_OK):
+                try:
+                    absElf = pwnlib.elf.ELF(fileName)
+                except:
+                    pass
+                else:
+                    totalElf += 1
+                    if absElf.canary:
+                        canaryNum += 1
+
+        status, output = commands.getstatusoutput('rm -rf temp/*')
+        log.write('Remove temporary directory: ' + str(status) + '\n')
+        status, output = commands.getstatusoutput('rm -rf ' + fullName)
+        

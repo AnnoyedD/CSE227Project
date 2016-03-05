@@ -27,7 +27,7 @@ for l in avail:
     pkgName = l.split()[0]
     version = l.split()[1]
     pkgName, arch = pkgName.split('.')
-    log.write.('Package: ' + str(pkgName))
+    log.write('Package: ' + str(pkgName))
     status, output = commands.getstatusoutput('dnf download ' + pkgName)
     log.write('Download Package: ' + str(status) + '\n')
     fullName = pkgName + '-' + version + '.' + arch + '.rpm'

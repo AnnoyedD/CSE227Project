@@ -2,6 +2,7 @@ import os
 import os.path
 from pwn import pwnlib
 import commands
+import sys
 
 pkgInfo = 'avail.txt'
 logFile = 'fedora23.log'
@@ -27,7 +28,7 @@ for l in avail:
     pkgName = l.split()[0]
     version = l.split()[1]
     pkgName, arch = pkgName.split('.')
-    log.write('Package: ' + str(pkgName))
+    log.write('Package: ' + str(pkgName) + '\n')
     status, output = commands.getstatusoutput('dnf download ' + pkgName)
     log.write('Download Package: ' + str(status) + '\n')
     fullName = pkgName + '-' + version + '.' + arch + '.rpm'
@@ -39,10 +40,11 @@ for l in avail:
     os.chdir('..')
     log.write('Decompress package: '+ str(status) + '\n')
 
-    for root, dirs, files in os.walk(cuDir + '/temp'):
+    for root, dirs, files in os.walk(curDir + '/temp'):
         for name in files:
             fileName = root + '/' + name
             if os.access(fileName, os.X_OK):
+                log.write('Runnable: ' + fileName)
                 try:
                     absElf = pwnlib.elf.ELF(fileName)
                 except:
@@ -52,7 +54,8 @@ for l in avail:
                     if absElf.canary:
                         canaryNum += 1
 
-        status, output = commands.getstatusoutput('rm -rf temp/*')
-        log.write('Remove temporary directory: ' + str(status) + '\n')
-        status, output = commands.getstatusoutput('rm -rf ' + fullName)
-        
+        sys.stdout.write("\r%d out of %d" % (canaryNum, totalElf))
+        sys.stdout.flush()
+    status, output = commands.getstatusoutput('rm -rf temp/*')
+    log.write('Remove temporary directory: ' + str(status) + '\n')
+    status, output = commands.getstatusoutput('rm -rf ' + fullName)

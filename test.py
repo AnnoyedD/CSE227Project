@@ -4,7 +4,7 @@ from pwn import pwnlib
 import commands
 
 pkgInfo='avail.txt'
-logFile='ubuntu15_04.log'
+logFile='ubuntu14_04.log'
 
 log=open(logFile,'w')
 

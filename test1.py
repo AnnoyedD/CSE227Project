@@ -66,24 +66,10 @@ while line:
           for name in files:
             fileName=root+'/'+name
             if isElf(fileName):
-              totalElf1+=1
-              status,output = commands.getstatusoutput('readelf -s '+f+' | grep \'__stack_chk_fail\'')
+              totalElf += 1
+              status,output = commands.getstatusoutput('readelf -s '+fileName+' | grep \'__stack_chk_fail\'')
               if status==0 and output:								
-                canaryNum1+=1
-						
-            if os.access(fileName,os.X_OK):
-              try:
-                absElf=pwnlib.elf.ELF(fileName)
-              except:
-                pass
-              else:
-                totalElf+=1
-                if absElf.canary:
-                  canaryNum+=1  
-								
-        print '{0} {1} {2} {3}'.format(totalElf, totalElf1, canaryNum, canaryNum1)
-        if canaryNum1 != canaryNum:
-          sys.exit(0)
+                canaryNum += 1
 
         status,output=commands.getstatusoutput('rm -rf temp')
         log.write('Remove temporary directory: '+str(status)+'\n')

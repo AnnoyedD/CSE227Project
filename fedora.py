@@ -1,8 +1,21 @@
 import os
+import struct
 import os.path
-from pwn import pwnlib
 import commands
 import sys
+
+
+def isElf(filename):
+    try:
+        f = open(filename, 'r')
+        f.seek(0)
+        hbytes = struct.unpack_from('BBB', f.read(3))
+        if hbytes[0]==127 and hbytes[1]==69 and hbytes[2]==76:
+            return True
+        else:
+            return False
+    except:
+        return False
 
 pkgInfo = 'avail.txt'
 logFile = 'fedora23.log'
@@ -43,19 +56,15 @@ for l in avail:
     for root, dirs, files in os.walk(curDir + '/temp'):
         for name in files:
             fileName = root + '/' + name
-            if os.access(fileName, os.X_OK):
-                log.write('Runnable: ' + fileName)
-                try:
-                    absElf = pwnlib.elf.ELF(fileName)
-                except:
-                    pass
-                else:
-                    totalElf += 1
-                    if absElf.canary:
-                        canaryNum += 1
+            if isElf(fileName):
+                totalElf += 1
+                status,output = commands.getstatusoutput('readelf -s '+fileName+' | grep \'__stack_chk_fail\'')
+                if status==0 and output:
+                    canaryNum += 1
 
         sys.stdout.write("\r%d out of %d" % (canaryNum, totalElf))
         sys.stdout.flush()
     status, output = commands.getstatusoutput('rm -rf temp/*')
     log.write('Remove temporary directory: ' + str(status) + '\n')
-    status, output = commands.getstatusoutput('rm -rf ' + fullName)
+    #status, output = commands.getstatusoutput('rm -rf ' + fullName)
+    status, output = commands.getstatusoutput('rm *.rpm')

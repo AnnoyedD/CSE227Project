@@ -41,7 +41,7 @@ for l in avail:
     pkgName = l.split()[0]
     version = l.split()[1]
     arch = pkgName.split('.')[-1]
-    pkgName = '.'.join(s.split('.')[:-1])
+    pkgName = '.'.join(pkgName.split('.')[:-1])
     log.write('Package: ' + str(pkgName) + '\n')
     status, output = commands.getstatusoutput('dnf download ' + pkgName)
     log.write('Download Package: ' + str(status) + '\n')

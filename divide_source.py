@@ -1,5 +1,5 @@
 directory = '/etc/apt/'
-original_file_name = 'source.list'
+original_file_name = 'sources.list'
 
 main_file_name = 'sources_main.list'
 restricted_file_name = 'sources_restricted.list'

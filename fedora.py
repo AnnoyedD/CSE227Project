@@ -40,7 +40,8 @@ for l in avail:
     totalNum += 1
     pkgName = l.split()[0]
     version = l.split()[1]
-    pkgName, arch = pkgName.split('.')
+    arch = pkgName.split('.')[-1]
+    pkgName = '.'.join(s.split('.')[:-1])
     log.write('Package: ' + str(pkgName) + '\n')
     status, output = commands.getstatusoutput('dnf download ' + pkgName)
     log.write('Download Package: ' + str(status) + '\n')
@@ -66,5 +67,6 @@ for l in avail:
         sys.stdout.flush()
     status, output = commands.getstatusoutput('rm -rf temp/*')
     log.write('Remove temporary directory: ' + str(status) + '\n')
+    log.write('Current Result (totalNum, totalElf, canaryNum)' + str(totalNum) + str(totalElf) + str(canaryNum) + '\n')
     #status, output = commands.getstatusoutput('rm -rf ' + fullName)
     status, output = commands.getstatusoutput('rm *.rpm')

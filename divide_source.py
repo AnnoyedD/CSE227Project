@@ -1,3 +1,5 @@
+import os
+
 directory = '/etc/apt/'
 original_file_name = 'sources.list'
 
@@ -21,3 +23,6 @@ for line in original_file:
         universe_file.write(line.replace('main','').replace('restricted','').replace('multiverse',''))
     if 'multiverse' in line:
         multiverse_file.write(line.replace('main','').replace('restricted','').replace('universe',''))
+
+original_file.close()
+os.rename(directory+original_file_name, directory+original_file_name+'.backup')

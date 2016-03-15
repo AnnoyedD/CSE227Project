@@ -4,6 +4,7 @@ import os.path
 import commands
 import struct
 import sys
+from random import shuffle
 #from pwn import pwnlib
 
 def isElf(filename):
@@ -18,11 +19,8 @@ def isElf(filename):
   except:
     return False
 
-def analysis(repo):
+def get_pkginfo(repo,log): 
   pkgInfo='avail_'+repo+'.txt'
-  logFile='ubuntu15_04_'+repo+'.log'
-
-  log=open(logFile,'w')
 
   status,output=commands.getstatusoutput('mv /etc/apt/sources_'+repo+'.list /etc/apt/sources.list')
   log.write('Update repo list: '+str(status)+'\n\n')
@@ -30,29 +28,58 @@ def analysis(repo):
 
   status,output=commands.getstatusoutput('apt-get update')
   log.write('Packages update: '+str(status)+'\n\n')
-  print 'Packages updata: ',status
+  print 'Packages update: ',status
 
   status,output=commands.getstatusoutput('apt-cache dumpavail > '+pkgInfo)
   log.write('Dump available packakges: '+str(status)+'\n\n')
   print 'Dump available packages: ',status
 
-  avail=open(pkgInfo,'r')
-
-  totalNum=0
-  totalElf=0
-  canaryNum=0
+def shuffle_pkg(repo,log):
+  avail=open('avail_'+repo+'.txt','r')
+  package=[]
+  pkgNum=0
 
   line=avail.readline()
   while line:
-    if line.find('Package: ')==0:
-      totalNum+=1
+    length=len(line)
+    if length>=9 and 'Package: '==line[:9]:
+      pkgNum+=1
 
-      length=len(line)
       sName=line[9:length].strip()
-      log.write('Package: '+str(sName))
-      print 'Package: ',sName
+      package.append(sName)
 
-      status,output=commands.getstatusoutput('apt-get download '+sName)
+    line=avail.readline()
+
+  avail.close()
+
+  x=[i for i in range(pkgNum)]
+  shuffle(x)
+  shuffle(x)
+  shuffle(x)
+  shf=[package[i] for i in x]
+
+  log.write('Shuffled package: '+str(pkgNum)+'\n\n')
+  print 'Shuffled package: ',pkgNum
+
+  return pkgNum,shf
+
+def analysis(repo,sample):
+  log=open('ubuntu15_04_'+repo+'.log','w')
+
+  get_pkginfo(repo,log) 
+  pkgNum,pkg=shuffle_pkg(repo,log)
+  
+  if sample>pkgNum:
+    sample=pkgNum
+  
+  totalElf=0
+  canaryNum=0
+  for i in range(sample):
+      pkgName=pkg[i]
+      log.write('Package: '+str(pkgName))
+      print 'Package: ',pkgName
+
+      status,output=commands.getstatusoutput('apt-get download '+pkgName)
       log.write('Download package: '+str(status)+'\n')
       print 'Download package: ',status
     
@@ -75,16 +102,6 @@ def analysis(repo):
                 if status==0 and output:
 		  canaryNum += 1
 
-             # if os.access(fileName,os.X_OK):
-             #   try:
-             #     absElf=pwnlib.elf.ELF(fileName)
-             #   except:
-             #     pass
-             #   else:
-             #     totalElf+=1
-             #     if absElf.canary:
-             #       canaryNum+=1  
-
           status,output=commands.getstatusoutput('rm -rf temp')
           log.write('Remove temporary directory: '+str(status)+'\n')
           print 'Remove temporary directory: ',status
@@ -92,25 +109,20 @@ def analysis(repo):
           log.write('Remove package: '+str(status)+'\n')
           print 'Remove package: ',status
           #for further analysis
-          log.write('Total number of packages: '+str(totalNum)+'\n')
+          log.write('Total number of packages: '+str(i+1)+'\n')
           log.write('Total number of elf: '+str(totalElf)+'\n')
           log.write('Total number of canary: '+str(canaryNum)+'\n\n')
-          print 'Total number of packages: ',totalNum
+          print 'Total number of packages: ',i+1
           print 'Total numver of elf: ',totalElf
           print 'Total number of canary: ', canaryNum
           break
       
-    line=avail.readline()
-    #if totalNum>0:
-    #  break;
-
-  avail.close()
-  
-  log.write('==============================================================\n')
-  log.write('Total number of packages: '+str(totalNum)+'\n')
+  log.write('\n==============================================================\n')
+  log.write('Total number of sample: '+str(pkgNum)+'\n')
   log.write('Total number of elf: '+str(totalElf)+'\n')
   log.write('Total number of canary: '+str(canaryNum)+'\n')
-  log.write('Percentage of canary: '+str(canaryNum/totalElf)+'\n\n')
+  if totalElf>0:
+    log.write('Percentage of canary: '+str(canaryNum/totalElf)+'\n\n')
 
   status,output=commands.getstatusoutput('mv /etc/apt/sources.list /etc/apt/sources_'+repo+'.list')
   log.write('Rename repo list: '+str(status)+'\n')
@@ -118,8 +130,11 @@ def analysis(repo):
 
   log.close()
 
+#read number of samples
+sample=int(raw_input('Enter sample number: '))
+
 #use different repositories
-analysis('main')
-analysis('restricted')
-analysis('universe')
-analysis('multiverse')
+analysis('main',sample)
+analysis('restricted',sample)
+analysis('universe',sample)
+analysis('multiverse',sample)

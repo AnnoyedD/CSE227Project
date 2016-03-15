@@ -124,10 +124,11 @@ def analysis(repo,sample,os_and_version):
   log.write('Total number of canary: '+str(canaryNum)+'\n')
   if totalElf>0:
     log.write('Percentage of canary: '+str(canaryNum/totalElf)+'\n\n')
-
-  status,output=commands.getstatusoutput('mv /etc/apt/sources.list /etc/apt/sources_'+repo+'.list')
-  log.write('Rename repo list: '+str(status)+'\n')
-  print 'Rename repo list: ',status
+  
+  if repo is not "all":
+    status,output=commands.getstatusoutput('mv /etc/apt/sources.list /etc/apt/sources_'+repo+'.list')
+    log.write('Rename repo list: '+str(status)+'\n')
+    print 'Rename repo list: ',status
 
   log.close()
 

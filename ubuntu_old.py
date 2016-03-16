@@ -141,7 +141,7 @@ def analysis(release,repo):
 release=sys.argv[1]
 # release=raw_input('Enter release name: ')
 
-analysis(release,'main')
 analysis(release,'restricted')
-analysis(release,'universe')
 analysis(release,'multiverse')
+analysis(release,'main')
+analysis(release,'universe')

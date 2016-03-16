@@ -4,7 +4,7 @@ import os.path
 import commands
 import struct
 import sys
-#from random import shuffle
+from random import shuffle
 #from pwn import pwnlib
 
 def isElf(filename):
@@ -59,7 +59,13 @@ def get_pkgURL(release,repo,log):
     log.write('Delete package info: '+str(status)+'\n')
     print 'Delete package info: ',status
 
-  return pkgNum,pkgURL
+  x=[i for i in range(pkgNum)]
+  shuffle(x)
+  shuffle(x)
+  shuffle(x)
+  shf=[pkgURL[i] for i in x]
+
+  return pkgNum,shf
 
 def analysis(release,repo):
   log=open('ubuntu_'+release+'_'+repo+'.log','w')

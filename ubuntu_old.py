@@ -59,13 +59,8 @@ def get_pkgURL(release,repo,log):
     log.write('Delete package info: '+str(status)+'\n')
     print 'Delete package info: ',status
 
-  x=[i for i in range(pkgNum)]
-  shuffle(x)
-  shuffle(x)
-  shuffle(x)
-  shf=[pkgURL[i] for i in x]
-
-  return pkgNum,shf
+  shuffle(pkgURL)
+  return pkgNum, pkgURL
 
 def analysis(release,repo):
   log=open('ubuntu_'+release+'_'+repo+'.log','w')

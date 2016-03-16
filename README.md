@@ -5,15 +5,15 @@
   * logFile: log
 
 ### Repository:
-  Package list is defined in /etc/apt/sources.list /etc/apt/sources.list.d. 
-  Usually /etc/apt/sources.list defines four repositories main, restricted, unive  rse, multiverse. Each repository is defined as several URLs, for example 
-  
-  deb http://us.archive.ubuntu.com/ubuntu vivid main 
-  
+  Package list is defined in /etc/apt/sources.list /etc/apt/sources.list.d.
+  Usually /etc/apt/sources.list defines four repositories main, restricted, unive  rse, multiverse. Each repository is defined as several URLs, for example
+
+  deb http://us.archive.ubuntu.com/ubuntu vivid main
+
   "vivid" defines the release and "main" defines the repositories.
   We want to distinguish the four repositories so we store the four repositories   into four files and the script will automatically read the different repositori  es.  
   To do (root privilege):
-  
+
   <pre><code>
     cd /etc/apt
     cp sources.list sources.backup //backup
@@ -28,7 +28,15 @@
 ### Run
 
   <pre><code>
-  root privilege 
+  root privilege
   python test.py
   </code></pre>  
-  
+
+  To use rpm analyzer, run as following
+  <pre><code>
+  python rpm_analyzer.py <name of log file> <directory contains your rpmfiles>
+  </code></pre>
+  Example:
+  <pre><code>
+  python rpm_analyzer.py fedora22.log fedora22
+  </code></pre>

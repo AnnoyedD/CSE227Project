@@ -131,7 +131,9 @@ def analysis(release,repo):
   log.close()
 
 #read release name
-release=raw_input('Enter release name: ')
+
+release=sys.argv[1]
+# release=raw_input('Enter release name: ')
 
 analysis(release,'main')
 analysis(release,'restricted')

@@ -34,7 +34,7 @@
 
   To use rpm analyzer, run as following
   <pre><code>
-  python rpm_analyzer.py <name of log file> <directory contains your rpmfiles>
+  python rpm_analyzer.py \<name of log file\> \<directory contains your rpmfiles\>
   </code></pre>
   Example:
   <pre><code>

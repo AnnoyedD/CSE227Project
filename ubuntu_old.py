@@ -72,7 +72,7 @@ def analysis(release,repo):
   totalElf=0
   canaryNum=0
   failNum=0
-  for i in range(1):
+  for i in range(pkgNum):
       URL=pkgURL[i]
       log.write('Pkg URL: '+str(URL)+'\n')
       print 'Pkg URL: ',URL
